@@ -9,8 +9,9 @@ header {
 .logo {
     background-image: url("C:/Users/LENOVO/OneDrive/Desktop/alu-AirBnB_clone/web_static/images/logo.png");
     background-size: contain;
-    width: 50px;
-    height: 50px;
+    width: 100px;
+    height: 142px;
     background-repeat: no-repeat;
-    margin-right: 10px;
+    margin-left: 20px;
+    background-position: center;
 }
