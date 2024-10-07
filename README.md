@@ -1,30 +1,61 @@
-AirBnB Clone
+HBnB 🏨
+HBnB is a comprehensive web application that combines various components such as database storage, a back-end API, and front-end interfacing, all designed to replicate some functionalities of AirBnB. Project to be done in teams of 2 people (Larissa Ziga BizimunguBizimungu, Tito-Paris Adaobi Olisakwe).
 
-## Project Overview
+Step 1 - The Console 🕹️
+Description
+Create your data model
+Manage (create, update, destroy, etc) objects via a console / command interpreter
+Store and persist objects to a file (JSON file)
+The first piece is to manipulate a powerful storage system. This storage engine will give us an abstraction between “My object” and “How they are stored and persisted”. This means: from your console code (the command interpreter itself) and from the front-end and RestAPI you will build later, you won’t have to pay attention (take care) of how your objects are stored.
 
-Below is a high-level, Python console application using object-oriented programming based on the AirBnB site. It involves the creation and manipulation of instances of the following classes: `BaseModel`, `User`, `Place`, `State`, `City`, `Amenity`, and `Review`.
+This abstraction will also allow you to change the type of storage easily without updating all of your codebase.
 
-## Features
-* **Create**: Create new instances of models
-* **Show**: Retrieve and display instances by class and ID
-* **Update**: Update existing instance attributes
-* **Destroy**: Delete instances by class and ID.
-* **list**: Lists all instances or a specified class of instances.
- 
-## Installation
-1. Clone this repository
- bash
- git clone https://github.com/Carine-69/alu-AirBnB_clone.git
+The console will be a tool to validate this storage engine
 
-2. create User
-   create User
-   
-4. Show a User by ID
-   show User <id>
-   
-5. Update a User's Email:
-   update User <id> email "newemail@example.com"
-   
-7. Destroy a User by ID
-   destroy User <id>
-   
+Relevant Files And Directories
+models: directory will contain all classes used for the entire project. A class, called “model” in a OOP * project is the representation of an object/instance.
+tests: directory will contain all unit tests.
+console.py: file is the entry point of our command interpreter.
+models/base_model.py: file is the base class of all our models. It contains common elements: .attributes: id, created_at and updated_at .methods: save() and to_json()
+models/engine: directory will contain all storage classes (using the same prototype). For the moment you will have only one: file_storage.py.
+Using The Console
+Run the console: ./console.py
+Quit the console: (hbnb) quit
+Display the help for a command: (hbnb) help
+Show an object: (hbnb) show or (hbnb) .show()
+Destroy an object: (hbnb) destroy or (hbnb) .destroy()
+Show all objects, or all instances of a class: (hbnb) all or (hbnb) all
+Update an attribute of an object: (hbnb) update "" or (hbnb) .update(, , "")
+Examples
+Interactive Mode:
+$ ./console.py
+(hbnb) help
+
+Documented commands (type help <topic>):
+===================================
+EOF  help  quit
+
+(hbnb) 
+(hbnb) 
+(hbnb) quit
+$
+Non-Interactive Mode:
+$ echo "help" | ./console.py
+(hbnb)
+
+Documented commands (type help <topic>):
+==================================
+EOF  help  quit
+(hbnb) 
+$
+$ cat test_help
+help
+$
+$ cat test_help | ./console.py
+(hbnb)
+
+Documented commands (type help <topic>):
+==================================
+EOF  help  quit
+(hbnb) 
+$
