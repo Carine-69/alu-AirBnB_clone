@@ -1,30 +1,45 @@
-import json
-import os
 
-class FileStorage:
-    __file_path = "file.json"
-    __objects = {}
+import uuid
+from datetime import datetime
+import models
 
-    def all(self):
-        """Returns the dictionary __objects"""
-        return FileStorage.__objects
 
-    def new(self, obj):
-        """Sets in __objects the obj with key <obj class name>.id"""
-        key = f"{obj.__class__.__name__}.{obj.id}"
-        FileStorage.__objects[key] = obj
+class BaseModel:
+    """Defines all common attributes/methods for other classes."""
+
+    def __init__(self, *args, **kwargs):
+        """Initializes the BaseModel with unique ID and creation time."""
+
+        tform = "%Y-%m-%dT%H:%M:%S.%f"
+
+        self.id = str(uuid.uuid4())  # unique id converted to string
+        self.created_at = datetime.now()  # current datetime for creation
+        self.updated_at = datetime.now()  # updated_at same as as created_at
+
+        if kwargs:
+            for key, value in kwargs.items():
+                if key == 'created_at' or key == 'updated_at':
+                    setattr(self, key, datetime.strptime(value, tform))
+                elif key != '__class__':
+                    setattr(self, key, value)
+        else:
+            models.storage.new(self)
+
+    def __str__(self):
+        """String representation of the BaseModel instance."""
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
-        """Serializes __objects to the JSON file (path: __file_path)"""
-        with open(self.__file_path, 'w') as f:
-            json.dump({key: obj.to_dict() for key, obj in self.__objects.items()}, f)
+        """Updates the updated_at attribute with the current datetime."""
+        self.updated_at = datetime.now()
+        models.storage.save()
 
-    def reload(self):
-        """Deserializes the JSON file to __objects (if it exists)"""
-        if os.path.exists(self.__file_path):
-            with open(self.__file_path, 'r') as f:
-                obj_dict = json.load(f)
-                from models.base_model import BaseModel
-                for key, value in obj_dict.items():
-                    if value['__class__'] == 'BaseModel':
-                        self.__objects[key] = BaseModel(**value)
+    def to_dict(self):
+        """Returns a dictionary containing all keys/values of the instance."""
+        # Copy the instance's __dict__ and add the __class__ key
+        result = self.__dict__.copy()
+        result['__class__'] = self.__class__.__name__
+        # Convert created_at and updated_at to ISO 8601 format strings
+        result['created_at'] = self.created_at.isoformat()
+        result['updated_at'] = self.updated_at.isoformat()
+        return result

@@ -1,72 +1,44 @@
-#!/usr/bin/python3
-# module that Defines the BaseModel Class
-from uuid import uuid4
+import uuid
 from datetime import datetime
 import models
-"""Parent class for all other classes in AirBnB Project"""
 
 
-class BaseModel():
-    """Parent class for all other classes in AirBnB Project
-    Methods:
-        __init__(self)
-        __str__(self)
-        __save(self)
-        __repr__(self)
-        to_dict(self)
-    """
+class BaseModel:
+    """Defines all common attributes/methods for other classes."""
+
     def __init__(self, *args, **kwargs):
-        """
-        Initialization method, called each time an instance is created.
-        Initialization attributes: uuid4, dates when class was updated/created
-        """
-        date_format = '%Y-%m-%dT%H:%M:%S.%f'
+        """Initializes the BaseModel with unique ID and creation time."""
+
+        tform = "%Y-%m-%dT%H:%M:%S.%f"
+
+        self.id = str(uuid.uuid4())  # unique id converted to string
+        self.created_at = datetime.now()  # current datetime for creation
+        self.updated_at = datetime.now()  # updated_at same as as created_at
+
         if kwargs:
             for key, value in kwargs.items():
-                if "created_at" == key:
-                    self.created_at = datetime.strptime(kwargs["created_at"],
-                                                        date_format)
-                elif "updated_at" == key:
-                    self.updated_at = datetime.strptime(kwargs["updated_at"],
-                                                        date_format)
-                elif "__class__" == key:
-                    pass
-                else:
+                if key == 'created_at' or key == 'updated_at':
+                    setattr(self, key, datetime.strptime(value, tform))
+                elif key != '__class__':
                     setattr(self, key, value)
         else:
-            self.id = str(uuid4())
-            self.created_at = datetime.now()
-            self.updated_at = datetime.now()
             models.storage.new(self)
-    def __str__(self):
-        """Method to set the string representation of BaseModel object.
-        Return the class name, id and the dictionary
-        """
-        return ('[{}] ({}) {}'.
-                format(self.__class__.__name__, self.id, self.__dict__))
 
-    def __repr__(self):
-        """returns string repr"""
-        return (self.__str__())
+    def __str__(self):
+        """String representation of the BaseModel instance."""
+        return f"[{self.__class__.__name__}] ({self.id}) {self.__dict__}"
 
     def save(self):
-        """
-        - Updates the public attribute `updated_at` with the current time
-        -
-        """
+        """Updates the updated_at attribute with the current datetime."""
         self.updated_at = datetime.now()
         models.storage.save()
 
     def to_dict(self):
-        """
-        returns the dictionary of the BaseModel with string formats of time,
-        A dictionary containing all the keys/value of __dict__ method of
-        the instance. A key __class__ is added to this dictionary with the
-        class name of the object
-        """
+        """Returns a dictionary containing all keys/values of the instance."""
+        # Copy the instance's __dict__ and add the __class__ key
         result = self.__dict__.copy()
-        result["created_at"] = self.created_at.isoformat()
-        result["updated_at"] = self.updated_at.isoformat()
-        result["__class__"] = self.__class__.__name__
+        result['__class__'] = self.__class__.__name__
+        # Convert created_at and updated_at to ISO 8601 format strings
+        result['created_at'] = self.created_at.isoformat()
+        result['updated_at'] = self.updated_at.isoformat()
         return result
-    
