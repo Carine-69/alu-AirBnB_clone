@@ -1,0 +1,9 @@
+{#templates/good.txt#}
+Hello {{name}},
+
+I'm happy to inform you that you did well on today's {{test_name}}.
+you achieved {{score}} out of {{max_score}} points!
+
+See you tomorrow,
+
+Ms.Thomas
